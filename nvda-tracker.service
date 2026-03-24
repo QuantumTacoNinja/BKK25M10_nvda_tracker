@@ -1,0 +1,48 @@
+# /etc/systemd/system/nvda-tracker.service
+#
+# Automated install (recommended):
+#   sudo bash install.sh
+#
+# Manual install:
+#   sudo cp nvda-tracker.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now nvda-tracker
+#
+# Logs:
+#   journalctl -u nvda-tracker -f
+#   journalctl -u nvda-tracker --since today
+
+[Unit]
+Description=NVDA intraday stock price tracker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# systemd allocates a transient user/group automatically; no useradd needed.
+DynamicUser=yes
+
+# systemd creates /var/lib/nvda-tracker, owned by the dynamic user.
+StateDirectory=nvda-tracker
+
+ExecStart=/opt/nvda-tracker/.venv/bin/python3 /opt/nvda-tracker/nvda_tracker.py
+
+Restart=on-failure
+RestartSec=15s
+TimeoutStopSec=30
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nvda-tracker
+
+Environment=PYTHONUNBUFFERED=1
+Environment=NVDA_STATE_FILE=/var/lib/nvda-tracker/nvda_today
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
