@@ -19,7 +19,7 @@ end-of-day summary.
 ## Install from source
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/QuantumTacoNinja/BKK25M10_nvda_tracker
 cd nvda-tracker
 sudo bash install.sh
 ```
